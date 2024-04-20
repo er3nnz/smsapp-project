@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Gönderme Uygulaması</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="js/script.js">
+</head>
+<body>
+<div class="container">
+    <h1>SMS Sender</h1>
+    <form id="smsForm">
+        <label for="destinationSMSNumber">Telefon Numarası:</label>
+        <input type="text" id="destinationSMSNumber" name="destinationSMSNumber" placeholder="+905551234567"
+               required><br><br>
+
+        <label for="smsMessage">Mesaj:</label><br>
+        <textarea id="smsMessage" name="smsMessage" rows="4" cols="50" required></textarea><br><br>
+
+        <button type="submit">Mesaj Gönder</button>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.getElementById("smsForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const destinationSMSNumber = formData.get("destinationSMSNumber");
+        const smsMessage = formData.get("smsMessage");
+
+        const body = {
+            destinationSMSNumber: destinationSMSNumber,
+            smsMessage: smsMessage
+        };
+
+        fetch("/api/v1/processSMS", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                document.getElementById("smsForm").reset();
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+</body>
+</html>
